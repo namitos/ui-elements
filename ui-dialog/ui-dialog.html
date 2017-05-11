@@ -1,0 +1,113 @@
+<link rel="import" href="../../shadycss/apply-shim.html">
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-dialog/paper-dialog.html">
+<link rel="import" href="../../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
+
+<!--
+`ui-dialog`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-dialog">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-dialog {
+        width: 640px;
+        top: 0 !important;
+      }
+
+      app-toolbar,
+      paper-dialog-scrollable {
+        margin: 0 !important;
+      }
+
+      app-toolbar {
+        @apply --ui-dialog-app-toolbar;
+      }
+
+      paper-dialog-scrollable {
+        --paper-dialog-scrollable: {
+          padding: 16px;
+        }
+      }
+
+      .icon {
+        margin-right: 8px;
+      }
+
+      [dialog-dismiss] {
+        cursor: pointer;
+      }
+
+      @media (max-width: 640px) {
+        paper-dialog {
+          width: 100%;
+          margin: 0;
+        }
+      }
+    </style>
+
+    <paper-dialog id="dialog" with-backdrop no-cancel-on-outside-click>
+      <app-toolbar>
+        <template is="dom-if" if="[[icon]]">
+          <iron-icon icon="[[icon]]" class="icon"></iron-icon>
+        </template>
+        <div main-title>[[title]]</div>
+        <iron-icon icon="close" dialog-dismiss></iron-icon>
+      </app-toolbar>
+      <paper-dialog-scrollable>
+        <slot></slot>
+      </paper-dialog-scrollable>
+    </paper-dialog>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiDialog extends Polymer.Element {
+      static get is() { return 'ui-dialog'; }
+      static get properties() {
+        return {
+          icon: {
+            type: String
+          },
+          title: {
+            type: String
+          },
+          removeAfterHide: {
+            type: Boolean,
+            value: true
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.$.dialog.addEventListener('iron-overlay-closed', (e) => {
+          if (this.removeAfterHide && this.parentNode) {
+            this.parentNode.removeChild(this);
+          }
+        })
+      }
+
+      open() {
+        this.$.dialog.open();
+      }
+
+      close() {
+        this.$.dialog.close();
+      }
+    }
+
+    window.customElements.define(UiDialog.is, UiDialog);
+  </script>
+</dom-module>
