@@ -12,7 +12,10 @@
     "paper-menu-button": "PolymerElements/paper-menu-button#2.0-preview",
     "paper-checkbox": "PolymerElements/paper-checkbox#2.0-preview",
     "paper-input": "PolymerElements/paper-input#2.0-preview",
-    "moment": "^2.18.1"
+    "app-elements": "PolymerElements/app-elements#_auto_generated_v2_preview",
+    "moment": "^2.18.1",
+    "Model-client": "namitos/Model-client",
+    "socket.io-client": "socketio/socket.io-client"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#2.0-preview",
