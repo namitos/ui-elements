@@ -1,0 +1,139 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
+
+<!--
+`ui-multiselect`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-multiselect">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: inline-block;
+      }
+
+      paper-menu-button {
+        padding: 0;
+        width: 100%;
+      }
+
+      paper-checkbox {
+        display: block;
+        margin: 0 0 6px 0;
+        font-size: 13px;
+      }
+
+      select {
+        -webkit-appearance: none;
+        width: 100%;
+        border: none;
+        display: none;
+        background: none;
+        height: 54px;
+        border-bottom: 1px solid #737373;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        padding: 27px 0 0 0;
+      }
+
+      @media (max-width: 640px) {
+        select {
+          display: inline-block;
+        }
+
+        paper-menu-button {
+          display: none;
+        }
+      }
+    </style>
+    <select multiple on-change="selectChange">
+      <template is="dom-repeat" items="[[_options]]">
+        <option value="[[item.value]]" selected="{{item.checked}}">[[item.value]]</option>
+      </template>
+    </select>
+
+    <paper-menu-button ignore-select horizontal-align="right" no-animations>
+      <div slot="dropdown-trigger">
+        <paper-input label="[[label]]" value="{{_value}}" readonly></paper-input>
+      </div>
+      <paper-listbox slot="dropdown-content" multi selected-attribute="selected" attr-for-selected="value" selected-values="{{value}}">
+        <template is="dom-repeat" items="[[_options]]">
+          <paper-item value="[[item.key]]">[[item.value]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-menu-button>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiMultiselect extends Polymer.Element {
+      static get is() {
+        return 'ui-multiselect';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: Array,
+            notify: true,
+            value: function () {
+              return []
+            }
+          },
+          options: {
+            type: Object,
+            observer: "_optionsChange",
+            value: () => {
+              return {}
+            }
+          },
+          required: Boolean,
+          _options: Array,
+          _value: String
+        };
+      }
+
+      static get observers() {
+        return [
+          '_valueChange(value.splices)'
+        ]
+      }
+
+      _valueChange() {
+        this._value = this.value.map((key) => this.options[key]).join(', ');
+      }
+
+      _optionsChange() {
+        this._options = this._obj2arr(this.options);
+      }
+
+      _obj2arr(obj) {
+        let arr = [];
+        Object.keys(obj).forEach((key) => {
+          arr.push({
+            key: key,
+            value: obj[key],
+            checked: (this.value ? this.value.includes(key) : false)
+          });
+        });
+        return arr;
+      }
+
+      selectChange(e) {
+        this.set('value', [...e.target.querySelectorAll('option:checked')].map((item) => item.value));
+      }
+    }
+
+    window.customElements.define(UiMultiselect.is, UiMultiselect);
+  </script>
+</dom-module>

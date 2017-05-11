@@ -1,0 +1,60 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../util/moment.html">
+<!--
+`ui-input-datetime`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-input-datetime">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-input required="[[required]]" label="{{label}}" value="{{_value}}" type="datetime-local"></paper-input>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiInputDatetime extends Polymer.Element {
+      static get is() {
+        return 'ui-input-datetime';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: Number,
+            notify: true,
+            observer: '_valueChanged'
+          },
+          _value: {
+            type: String,
+            observer: '_valuePrivateChanged'
+          },
+          required: Boolean
+        };
+      }
+
+      _valuePrivateChanged() {
+        if (!this._preventFireObs) {
+          this.set('value', this._value ? moment(this._value, "YYYY-MM-DDTHH:mm").toDate().valueOf() : '');
+        }
+      }
+
+      _valueChanged() {
+        this._preventFireObs = true;
+        this.set('_value', parseInt(this.value) ? moment(parseInt(this.value)).format("YYYY-MM-DDTHH:mm") : 0);
+        this._preventFireObs = false;
+      }
+    }
+
+    window.customElements.define(UiInputDatetime.is, UiInputDatetime);
+  </script>
+</dom-module>

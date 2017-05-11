@@ -1,0 +1,54 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+
+<!--
+`ui-icon-toggle`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-icon-toggle">
+  <template>
+    <paper-icon-button icon="[[_icon(value, iconOn, iconOff)]]" on-click="toggle"></paper-icon-button>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiIconToggle extends Polymer.Element {
+      static get is() {
+        return 'ui-icon-toggle';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+          iconOn: {
+            type: String
+          },
+          iconOff: {
+            type: String
+          }
+        };
+      }
+
+      _icon(value) {
+        return value ? this.iconOn : this.iconOff;
+      }
+
+      toggle() {
+        this.value = !this.value;
+        this.dispatchEvent(new CustomEvent('change', {detail: this.value}))
+      }
+    }
+
+    window.customElements.define(UiIconToggle.is, UiIconToggle);
+  </script>
+</dom-module>

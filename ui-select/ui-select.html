@@ -1,0 +1,87 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-listbox/paper-listbox.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+
+<!--
+`ui-select`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-select">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: inline-block;
+      }
+
+      paper-item {
+        white-space: nowrap;
+      }
+
+      paper-dropdown-menu {
+        width: 100%;
+      }
+    </style>
+    <paper-dropdown-menu required="[[required]]" label="[[label]]" no-animations>
+      <paper-listbox slot="dropdown-content" selected="{{value}}" attr-for-selected="value">
+        <template is="dom-repeat" items="[[_options]]">
+          <paper-item value="[[item.key]]">[[item.value]]</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiSelect extends Polymer.Element {
+      static get is() {
+        return 'ui-select';
+      }
+
+      static get properties() {
+        return {
+          value: {
+            type: String,
+            notify: true,
+            value: ""
+          },
+          options: {
+            type: Object,
+            observer: "_optionsChange",
+            value: () => {
+              return {}
+            }
+          },
+          required: Boolean,
+          _options: Array
+        };
+      }
+
+      _optionsChange() {
+        this._options = this._obj2arr(this.options);
+        if (!this.options[this.value]) {
+          this.value = "";
+        }
+      }
+
+      _obj2arr(obj) {
+        let arr = [];
+        Object.keys(obj).forEach((key) => {
+          arr.push({
+            key: key,
+            value: obj[key]
+          });
+        });
+        return arr;
+      }
+    }
+
+    window.customElements.define(UiSelect.is, UiSelect);
+  </script>
+</dom-module>

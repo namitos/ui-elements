@@ -1,0 +1,77 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+
+<!--
+`ui-table-sort-control`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-table-sort-control">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <template is="dom-if" if="[[_eq(sort.field, field)]]">
+      <template is="dom-if" if="[[_eq(sort.direction, 1)]]">
+        <paper-icon-button icon="icons:arrow-upward" on-click="changeSort"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="[[_eq(sort.direction, -1)]]">
+        <paper-icon-button icon="icons:arrow-downward" on-click="changeSort"></paper-icon-button>
+      </template>
+    </template>
+    <template is="dom-if" if="[[!_eq(sort.field, field)]]">
+      <paper-icon-button icon="icons:sort" on-click="changeSort"></paper-icon-button>
+    </template>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiTableSortControl extends Polymer.Element {
+      static get is() {
+        return 'ui-table-sort-control';
+      }
+
+      static get properties() {
+        return {
+          /**
+           *
+           */
+          sort: {
+            type: Object,
+            notify: true,
+            value: () => {
+              return {
+                direction: 1
+              }
+            }
+          },
+          field: {
+            type: String
+          }
+        };
+      }
+
+      _eq(a, b) {
+        return a === b;
+      }
+
+      changeSort() {
+        if (this.sort.field === this.field) {
+          this.set("sort.direction", this.sort.direction === 1 ? -1 : 1);
+        } else {
+          this.set("sort.field", this.field);
+        }
+      }
+    }
+
+    window.customElements.define(UiTableSortControl.is, UiTableSortControl);
+  </script>
+</dom-module>
