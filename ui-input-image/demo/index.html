@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>ui-input-image demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../ui-input-image.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic ui-input-image demo</h3>
+      <demo-snippet>
+        <template>
+          <ui-input-image class="basic" accept="image/jpeg,image/png"></ui-input-image>
+          <script>
+            const input = document.getElementsByClassName('basic')[0];
+            input.addEventListener('error', (e) => console.log(e.detail));
+          </script>
+        </template>
+      </demo-snippet>
+      <h3>Multiple ui-input-image demo</h3>
+      <demo-snippet>
+        <template>
+          <ui-input-image class="multiple" multiple accept="image/jpeg,image/png"></ui-input-image>
+          <script>
+            const multipleInput = document.getElementsByClassName('multiple')[0];
+            multipleInput.addEventListener('error', (e) => console.log(e.detail));
+          </script>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

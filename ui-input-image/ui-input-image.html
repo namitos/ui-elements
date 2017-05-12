@@ -1,0 +1,199 @@
+<link rel="import" href="../../shadycss/apply-shim.html">
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../paper-styles/paper-styles.html">
+
+
+<!--
+`ui-input-image`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-input-image">
+  <template>
+    <style>
+      html {
+        --upload-button-styles: {
+          margin: 0;
+        }
+      }
+
+      :host {
+        display: block;
+        box-sizing: border-box;
+        @apply --paper-font-common-base;
+      }
+
+      #dropzone {
+        border: 1px dashed var(--paper-grey-500);
+        border-radius: 3px;
+        padding: 16px;
+      }
+
+      #dropzone.dragover {
+        border-style: solid;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .buttons paper-button {
+        @apply --upload-button-styles;
+      }
+
+      .drop-label {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        color: var(--paper-grey-500);
+      }
+
+      .drop-label iron-icon {
+        margin: 0 8px;
+      }
+
+      .files {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -5px;
+        padding-top: 16px;
+      }
+
+      .img-wrapper {
+        position: relative;
+        margin: 5px;
+      }
+
+      .img-wrapper paper-icon-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .img-wrapper img {
+        display: block;
+        max-width: 250px;
+      }
+    </style>
+
+    <input type="file" id="fileInput" on-change="_fileInputChanged" accept$="[[accept]]" multiple$="[[multiple]]" hidden>
+
+    <div id="dropzone">
+      <div class="buttons">
+        <paper-button raised on-click="selectFiles">Выбрать файл</paper-button>
+        <div class="drop-label">
+          <iron-icon icon="file-upload"></iron-icon>
+          <span>Перетащите файлы сюда</span>
+        </div>
+      </div>
+      <template is="dom-if" if="[[value.length]]">
+        <div class="files">
+          <template is="dom-repeat" items="[[value]]">
+            <div class="img-wrapper">
+              <paper-icon-button icon="clear" on-click="_removeFile"></paper-icon-button>
+              <img src$="[[item]]" alt="uploaded-image">
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+  </template>
+  <script>
+    /** @polymerElement */
+    class UiInputImage extends Polymer.Element {
+      static get is() { return 'ui-input-image'; }
+      static get properties() {
+        return {
+          accept: {
+            type: String,
+            value: ''
+          },
+          multiple: {
+            type: Boolean,
+            value: false
+          },
+          value: {
+            type: Array,
+            notify: true,
+            value: () => []
+          }
+        };
+      }
+      
+      connectedCallback() {
+        super.connectedCallback();
+        this.$.dropzone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          this.$.dropzone.classList.add('dragover');
+        });
+        this.$.dropzone.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          this.$.dropzone.classList.remove('dragover');
+        });
+        this.$.dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          this.$.dropzone.classList.remove('dragover');
+          let { files } = e.dataTransfer;
+          if (!this.multiple && files.length > 1) {
+            this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Необходимо выбрать один файл'}}));
+          } else {
+            this._readFiles(files);
+          }
+        });
+      }
+
+      _fileInputChanged() {
+        const { files } = this.$.fileInput;
+        this._readFiles(files);
+      }
+
+      selectFiles() {
+        this.$.fileInput.click();
+      }
+
+      _readFiles(files) { 
+        if (files.length) {
+          if (!this.multiple) {
+            this.set('value', []);
+          }
+          const mimeTypes = this.accept.split(',');
+          const filteredFiles = Array.prototype.filter.call(files, (file) => {
+            if (mimeTypes.includes(file.type)) {
+              return true;
+            } else {
+              this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Неподходящий формат файла'}}));
+              return false;
+            }
+          });
+          Array.prototype.forEach.call(filteredFiles, (file, i) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.push('value', e.target.result);
+            }
+            reader.onerror = (e) => {
+              this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Ошибка чтения файла'}}));
+            }
+            reader.readAsDataURL(file)
+          });
+        }
+      }
+
+      _removeFile(e) {
+        this.splice('value', e.model.index, 1);
+      }
+    }
+
+    window.customElements.define(UiInputImage.is, UiInputImage);
+  </script>
+</dom-module>
