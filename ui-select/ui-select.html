@@ -4,6 +4,7 @@
 <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
 
 <!--
 `ui-select`
@@ -28,7 +29,7 @@
         width: 100%;
       }
     </style>
-    <paper-dropdown-menu required="[[required]]" label="[[label]]" no-animations>
+    <paper-dropdown-menu invalid="[[invalid]]" label="[[label]]" no-animations>
       <paper-listbox slot="dropdown-content" selected="{{value}}" attr-for-selected="value">
         <template is="dom-repeat" items="[[_options]]">
           <paper-item value="[[item.key]]">[[item.value]]</paper-item>
@@ -39,7 +40,7 @@
 
   <script>
     /** @polymerElement */
-    class UiSelect extends Polymer.Element {
+    class UiSelect extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
       static get is() {
         return 'ui-select';
       }
@@ -49,11 +50,12 @@
           value: {
             type: String,
             notify: true,
-            value: ""
+            value: '',
+            observer: '_valueChange'
           },
           options: {
             type: Object,
-            observer: "_optionsChange",
+            observer: '_optionsChange',
             value: () => {
               return {}
             }
@@ -70,6 +72,10 @@
         }
       }
 
+      _valueChange() {
+        this.invalid = false;
+      }
+
       _obj2arr(obj) {
         let arr = [];
         Object.keys(obj).forEach((key) => {
@@ -79,6 +85,15 @@
           });
         });
         return arr;
+      }
+
+      _getValidity() {  //override method
+        if (this.required) {
+          this.invalid = !this.value;
+        } else {
+          this.invalid = false;
+        }
+        return !this.invalid;
       }
     }
 

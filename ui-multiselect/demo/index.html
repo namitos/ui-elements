@@ -10,6 +10,7 @@
 
   <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
   <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../../iron-form/iron-form.html">
   <link rel="import" href="../ui-multiselect.html">
 
   <style is="custom-style" include="demo-pages-shared-styles">
@@ -21,6 +22,22 @@
   <demo-snippet>
     <template>
       <ui-multiselect options='{"foo": "foo", "bar":"bar"}' value='["foo"]'></ui-multiselect>
+    </template>
+  </demo-snippet>
+
+  <h3>Basic form ui-multiselect demo</h3>
+  <demo-snippet>
+    <template>
+      <iron-form>
+        <form>
+          <ui-multiselect required options='{"foo": "foo", "bar":"bar"}'></ui-multiselect>
+          <button type="submit">submit</button>
+        </form>
+      </iron-form>
+      <script>
+        const ironForm = document.getElementsByTagName('iron-form')[0];
+        ironForm.addEventListener('iron-form-submit', (e) => console.log(e));
+      </script>
     </template>
   </demo-snippet>
 </div>

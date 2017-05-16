@@ -2,6 +2,8 @@
 <!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
 <link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../util/moment.html">
 <!--
 `ui-input-datetime`
@@ -14,15 +16,16 @@
   <template>
     <style>
       :host {
-        display: block;
+        position: relative;
+        display: inline-block;
       }
     </style>
-    <paper-input required="[[required]]" label="{{label}}" value="{{_value}}" type="datetime-local"></paper-input>
+    <paper-input invalid="[[invalid]]" label="{{label}}" value="{{_value}}" type="datetime-local"></paper-input>
   </template>
 
   <script>
     /** @polymerElement */
-    class UiInputDatetime extends Polymer.Element {
+    class UiInputDatetime extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
       static get is() {
         return 'ui-input-datetime';
       }
@@ -49,9 +52,19 @@
       }
 
       _valueChanged() {
+        this.invalid = false;
         this._preventFireObs = true;
         this.set('_value', parseInt(this.value) ? moment(parseInt(this.value)).format("YYYY-MM-DDTHH:mm") : 0);
         this._preventFireObs = false;
+      }
+
+      _getValidity() {  //override method
+        if (this.required) {
+          this.invalid = !this.value;
+        } else {
+          this.invalid = false;
+        }
+        return !this.invalid;
       }
     }
 
