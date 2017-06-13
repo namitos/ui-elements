@@ -1,0 +1,85 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+
+<!--
+`ui-fc-wrapper`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-fc-wrapper">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+    </style>
+  </template>
+  <script>
+    /** @polymerElement */
+    class UiFcWrapper extends Polymer.Element {
+      static get is() {
+        return 'ui-fc-wrapper';
+      }
+
+      static get properties() {
+        return {
+          schema: Object,
+          value: {
+            notify: true
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        const {widget, type, label} = this.schema;
+
+        let el;
+
+        if (widget) {
+          el = document.createElement(widget);
+          el.label = label;
+        } else {
+          if (type === 'string') {
+            el = document.createElement('paper-input');
+            el.type = 'text';
+            el.label = label;
+          } else if (type === 'number') {
+            el = document.createElement('paper-input');
+            el.type = 'number';
+            el.label = label;
+          } else if (type === 'boolean') {
+            el = document.createElement('paper-checkbox');
+            el.innerText = label;
+          } else {
+            console.warn(`Unexpected schema type: "${type}"`)
+          }
+        }
+
+        if (el) {
+          this.root.appendChild(el);
+          el.addEventListener('change', this._elChanged(el));
+          el.addEventListener('input', this._elChanged(el));
+        }
+      }
+
+      _elChanged(el) {
+        const {widget, type} = this.schema;
+        return (e) => {
+          e.stopPropagation();
+          this.value = !widget && type === 'boolean' ? el.checked : el.value;
+          this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+        }
+      }
+
+    }
+
+    window.customElements.define(UiFcWrapper.is, UiFcWrapper);
+  </script>
+</dom-module>
