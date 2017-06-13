@@ -28,15 +28,19 @@
 
       static get properties() {
         return {
-          schema: Object,
+          _el: Object,
           value: {
-            notify: true
-          }
+            notify: true,
+            observer: '_valueChanged'
+          },
+          schema: Object
         };
       }
 
       connectedCallback() {
         super.connectedCallback();
+
+        this._changeHandler = this._changeHandler.bind(this);
 
         const {widget, type, label} = this.schema;
 
@@ -63,19 +67,24 @@
         }
 
         if (el) {
+          this._el = el;
           this.root.appendChild(el);
-          el.addEventListener('change', this._elChanged(el));
-          el.addEventListener('input', this._elChanged(el));
+          el.addEventListener('change', this._changeHandler);
+          el.addEventListener('input', this._changeHandler);
         }
       }
 
-      _elChanged(el) {
+      _changeHandler(e) {
+        e.stopPropagation();
         const {widget, type} = this.schema;
-        return (e) => {
-          e.stopPropagation();
-          this.value = !widget && type === 'boolean' ? el.checked : el.value;
-          this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
-        }
+        const {checked, value} = this._el;
+        this.value = !widget && type === 'boolean' ? checked : value;
+        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+      }
+
+      _valueChanged(e) {
+        const {widget, type} = this.schema;
+        this._el[!widget && type === 'boolean' ? 'checked' : 'value'] = this.value;
       }
 
     }
