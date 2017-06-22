@@ -1,0 +1,144 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../fc-primitive/fc-primitive.html">
+<link rel="import" href="../fc-object/fc-object.html">
+
+<dom-module id="fc-array">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .row {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+      }
+
+      .row > *:first-child {
+        @apply --layout-flex;
+      }
+    </style>
+
+    <div>[[schema.label]]</div>
+
+    <template is="dom-if" if="[[_eqSome(schema.items.type, 'string', 'number', 'boolean')]]">
+      <template is="dom-repeat" items="[[value]]">
+        <div class="row">
+          <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-primitive>
+          <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
+        </div>
+      </template>
+    </template>
+
+    <template is="dom-if" if="[[_eqSome(schema.items.type, 'object')]]">
+      <template is="dom-repeat" items="[[value]]">
+        <div class="row">
+          <fc-object schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-object>
+          <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
+        </div>
+      </template>
+    </template>
+
+    <template is="dom-if" if="[[_eqSome(schema.items.type, 'array')]]">
+      <template is="dom-repeat" items="[[value]]">
+        <div class="row">
+          <fc-array schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-array>
+          <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
+        </div>
+      </template>
+    </template>
+
+    <div>
+      <paper-icon-button icon="icons:add" on-click="addItem"></paper-icon-button>
+    </div>
+
+  </template>
+
+  <script>
+    /**
+     * `fc-array`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FcArray extends Polymer.Element {
+
+      static get is() {
+        return 'fc-array';
+      }
+
+      static get properties() {
+        return {
+          schema: Object,
+          value: {
+            notify: true,
+            value: () => {
+              return [];
+            }
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        const {type} = this.schema;
+
+        if (type !== 'array') {
+          console.warn(`Unexpected schema type: "${type}"`);
+        }
+      }
+
+      addItem() {
+        const {items: {type}} = this.schema;
+        let item;
+        if (type === 'object') {
+          item = {};
+        } else if (type === 'array') {
+          item = [];
+        }
+        this.value.push(item);
+        this.value = this.value.slice();
+        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+      }
+
+      removeItem(e) {
+        const {index} = e.model;
+        this.value.splice(index, 1);
+        this.value = this.value.slice();
+        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+      }
+
+      _setValue(index, value) {
+        if (value) {
+          return value[index];
+        }
+      }
+
+      _itemChanged(e) {
+        const {index} = e.model;
+        const {value} = e.detail;
+        this.value[index] = value;
+        this.value = this.value.slice();
+        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+      }
+
+      _eqSome(a, ...rest) {
+        return rest.some((item) => item === a);
+      }
+
+    }
+
+    window.customElements.define(FcArray.is, FcArray);
+  </script>
+</dom-module>

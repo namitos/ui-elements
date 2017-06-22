@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>fc-object demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../fc-object.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic fc-object demo</h3>
+      <demo-snippet>
+        <template>
+          <dom-bind>
+            <template>
+              <fc-object value="{{value}}" schema='
+                {
+                  "type": "object",
+                  "label": "someObject",
+                  "properties": {
+                    "strProp": {
+                      "type": "string",
+                      "label": "strProp"
+                    },
+                    "numProp": {
+                      "type": "number",
+                      "label": "numProp"
+                    },
+                    "boolProp": {
+                      "type": "boolean",
+                      "label": "boolProp"
+                    },
+                    "objProp": {
+                      "type": "object",
+                      "label": "objProp",
+                      "properties": {
+                        "nestedObjStr": {
+                          "type": "string",
+                          "label": "nestedObjStr"
+                        },
+                        "nestedObjNum": {
+                          "type": "number",
+                          "label": "nestedObjNum"
+                        },
+                        "nestedObjBool": {
+                          "type": "boolean",
+                          "label": "nestedObjBool"
+                        }
+                      }
+                    }
+                  }
+                }
+              '></fc-object>
+              <div>
+                <div>strProp: [[value.strProp]]</div>
+                <div>numProp: [[value.numProp]]</div>
+                <div>boolProp: [[value.boolProp]]</div>
+                <div>objProp.nestedObjStr: [[value.objProp.nestedObjStr]]</div>
+                <div>objProp.nestedObjNum: [[value.objProp.nestedObjNum]]</div>
+                <div>objProp.nestedObjBool: [[value.objProp.nestedObjBool]]</div>
+              </div>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
