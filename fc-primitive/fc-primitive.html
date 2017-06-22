@@ -82,6 +82,7 @@
 
         if (el) {
           el.required = required;
+          el.schema = this.schema;
           this._element = el;
           this.root.appendChild(this._element);
           this._element.addEventListener('change', this._handleChange);
