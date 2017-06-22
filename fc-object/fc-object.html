@@ -1,0 +1,111 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../fc-primitive/fc-primitive.html">
+<link rel="import" href="../fc-array/fc-array.html">
+
+<dom-module id="fc-object">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div>[[schema.label]]</div>
+
+    <template is="dom-repeat" items="[[_props2arr(schema.properties)]]">
+
+      <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'boolean')]]">
+        <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value)]]" on-change="_fieldChanged"></fc-primitive>
+      </template>
+
+      <template is="dom-if" if="[[_eqSome(item.schema.type, 'object')]]">
+        <fc-object schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>
+      </template>
+
+      <template is="dom-if" if="[[_eqSome(item.schema.type, 'array')]]">
+        <fc-array schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>></fc-array>
+      </template>
+
+    </template>
+
+  </template>
+
+  <script>
+    /**
+     * `fc-object`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FcObject extends Polymer.Element {
+
+      static get is() {
+        return 'fc-object';
+      }
+
+      static get properties() {
+        return {
+          schema: Object,
+          value: {
+            notify: true,
+            value: () => {
+              return {};
+            }
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        const {type} = this.schema;
+
+        if (type !== 'object') {
+          console.warn(`Unexpected schema type: "${type}"`);
+        }
+      }
+
+      _setValue(field, value, schema) {
+        if (value) {
+          if (schema) {
+            if (schema.type === 'object') {
+              return value[field] || {};
+            } else if (schema.type === 'array') {
+              return value[field] || [];
+            }
+          }
+          return value[field];
+        }
+      }
+
+      _fieldChanged(e) {
+        const {item} = e.model;
+        const {value} = e.detail;
+        this.value[item.field] = value;
+        this.value = Object.assign({}, this.value);
+        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+      }
+
+      _props2arr(obj) {
+        return Object.keys(obj).map((key) => {
+          return {
+            field: key,
+            schema: obj[key]
+          };
+        })
+      }
+      
+      _eqSome(a, ...rest) {
+        return rest.some((item) => item === a);
+      }
+
+    }
+
+    window.customElements.define(FcObject.is, FcObject);
+  </script>
+</dom-module>

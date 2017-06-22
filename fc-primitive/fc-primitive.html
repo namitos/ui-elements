@@ -1,46 +1,56 @@
 <link rel="import" href="../../polymer/polymer-element.html">
-<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
-<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
+
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
 
-<!--
-`ui-fc-wrapper`
-
-
-@demo demo/index.html
--->
-
-<dom-module id="ui-fc-wrapper">
+<dom-module id="fc-primitive">
   <template>
     <style>
       :host {
-        display: inline-block;
+        display: block;
+      }
+
+      paper-checkbox {
+        padding: 8px 0;
       }
     </style>
   </template>
+
   <script>
-    /** @polymerElement */
-    class UiFcWrapper extends Polymer.Element {
+    /**
+     * `fc-primitive`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class FcPrimitive extends Polymer.Element {
+
       static get is() {
-        return 'ui-fc-wrapper';
+        return 'fc-primitive';
       }
 
       static get properties() {
         return {
-          _el: Object,
+          _element: Object,
+          schema: Object,
           value: {
-            notify: true,
-            observer: '_valueChanged'
-          },
-          schema: Object
+            notify: true
+          }
         };
+      }
+
+      static get observers() {
+        return [
+          '_setElementValue(_element, value)'
+        ]
       }
 
       connectedCallback() {
         super.connectedCallback();
 
-        this._changeHandler = this._changeHandler.bind(this);
+        this._handleChange = this._handleChange.bind(this);
 
         const {widget, type, label} = this.schema;
 
@@ -67,28 +77,30 @@
         }
 
         if (el) {
-          this._el = el;
-          this.root.appendChild(el);
-          el.addEventListener('change', this._changeHandler);
-          el.addEventListener('input', this._changeHandler);
+          this._element = el;
+          this.root.appendChild(this._element);
+          this._element.addEventListener('change', this._handleChange);
+          this._element.addEventListener('input', this._handleChange);
         }
       }
 
-      _changeHandler(e) {
+      _handleChange(e) {
         e.stopPropagation();
         const {widget, type} = this.schema;
-        const {checked, value} = this._el;
+        const {checked, value} = this._element;
         this.value = !widget && type === 'boolean' ? checked : value;
         this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
       }
 
-      _valueChanged(e) {
+      _setElementValue() {
         const {widget, type} = this.schema;
-        this._el[!widget && type === 'boolean' ? 'checked' : 'value'] = this.value;
+        if (this._element) {
+          this._element[!widget && type === 'boolean' ? 'checked' : 'value'] = this.value;
+        }
       }
 
     }
 
-    window.customElements.define(UiFcWrapper.is, UiFcWrapper);
+    window.customElements.define(FcPrimitive.is, FcPrimitive);
   </script>
 </dom-module>

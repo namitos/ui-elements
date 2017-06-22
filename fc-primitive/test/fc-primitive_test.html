@@ -4,36 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>ui-fc-wrapper test</title>
+    <title>fc-primitive test</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../ui-fc-wrapper.html">
+    <link rel="import" href="../fc-primitive.html">
   </head>
   <body>
 
     <test-fixture id="BasicTestFixture">
       <template>
-        <ui-fc-wrapper></ui-fc-wrapper>
+        <fc-primitive></fc-primitive>
       </template>
     </test-fixture>
 
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
-        <ui-fc-wrapper prop1="new-prop1"></ui-fc-wrapper>
+        <fc-primitive prop1="new-prop1"></fc-primitive>
       </template>
     </test-fixture>
 
     <script>
-      suite('ui-fc-wrapper', function() {
+      suite('fc-primitive', function() {
 
         test('instantiating the element with default properties works', function() {
           var element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'ui-fc-wrapper');
+          assert.equal(element.prop1, 'fc-primitive');
           var elementShadowRoot = element.shadowRoot;
           var elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello ui-fc-wrapper!');
+          assert.equal(elementHeader.innerHTML, 'Hello fc-primitive!');
         });
 
         test('setting a property on the element works', function() {
