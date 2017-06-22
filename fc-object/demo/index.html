@@ -12,6 +12,7 @@
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
     <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../../../iron-form/iron-form.html">
     <link rel="import" href="../fc-object.html">
 
     <custom-style>
@@ -26,44 +27,64 @@
         <template>
           <dom-bind>
             <template>
-              <fc-object value="{{value}}" schema='
-                {
-                  "type": "object",
-                  "label": "someObject",
-                  "properties": {
-                    "strProp": {
-                      "type": "string",
-                      "label": "strProp"
-                    },
-                    "numProp": {
-                      "type": "number",
-                      "label": "numProp"
-                    },
-                    "boolProp": {
-                      "type": "boolean",
-                      "label": "boolProp"
-                    },
-                    "objProp": {
+              <iron-form>
+                <form id="form">
+                  <fc-object value="{{value}}" schema='
+                    {
                       "type": "object",
-                      "label": "objProp",
+                      "label": "someObject",
                       "properties": {
-                        "nestedObjStr": {
+                        "strProp": {
                           "type": "string",
-                          "label": "nestedObjStr"
+                          "label": "strProp",
+                          "required": true
                         },
-                        "nestedObjNum": {
+                        "numProp": {
                           "type": "number",
-                          "label": "nestedObjNum"
+                          "label": "numProp",
+                          "required": true
                         },
-                        "nestedObjBool": {
+                        "boolProp": {
                           "type": "boolean",
-                          "label": "nestedObjBool"
+                          "label": "boolProp",
+                          "required": true
+                        },
+                        "objProp": {
+                          "type": "object",
+                          "label": "objProp",
+                          "properties": {
+                            "nestedObjStr": {
+                              "type": "string",
+                              "label": "nestedObjStr",
+                              "required": true
+                            },
+                            "nestedObjNum": {
+                              "type": "number",
+                              "label": "nestedObjNum",
+                              "required": true
+                            },
+                            "nestedObjBool": {
+                              "type": "boolean",
+                              "label": "nestedObjBool",
+                              "required": true
+                            }
+                          }
+                        },
+                        "arrProp": {
+                          "type": "array",
+                          "label": "arrProp",
+                          "items": {
+                            "type": "string",
+                            "label": "arrItem",
+                            "required": true
+                          }
                         }
                       }
                     }
-                  }
-                }
-              '></fc-object>
+                  '></fc-object>
+                  <button>submit</button>
+                </form>
+              </iron-form>
               <div>
                 <div>strProp: [[value.strProp]]</div>
                 <div>numProp: [[value.numProp]]</div>
@@ -71,7 +92,18 @@
                 <div>objProp.nestedObjStr: [[value.objProp.nestedObjStr]]</div>
                 <div>objProp.nestedObjNum: [[value.objProp.nestedObjNum]]</div>
                 <div>objProp.nestedObjBool: [[value.objProp.nestedObjBool]]</div>
+                <div>
+                  <dom-repeat items="[[value.arrProp]]">
+                    <template>
+                      <span>[[item]] </span>
+                    </template>
+                  </dom-repeat>
+                </div>
               </div>
+              <script>
+                const form = document.getElementById('form');
+                form.addEventListener('submit', (e) => console.log(e))
+              </script>
             </template>
           </dom-bind>
         </template>

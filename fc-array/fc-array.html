@@ -2,6 +2,8 @@
 <link rel="import" href="../../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
+
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 
@@ -71,7 +73,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class FcArray extends Polymer.Element {
+    class FcArray extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
 
       static get is() {
         return 'fc-array';
@@ -135,6 +137,23 @@
 
       _eqSome(a, ...rest) {
         return rest.some((item) => item === a);
+      }
+
+       _getValidity() {
+        this.invalid = false;
+        const elements = [];
+        const arrays = this.root.querySelectorAll('fc-array');
+        const objects = this.root.querySelectorAll('fc-object');
+        const primitives = this.root.querySelectorAll('fc-primitive');
+        arrays && elements.push(...arrays);
+        objects && elements.push(...objects);
+        primitives && elements.push(...primitives);
+        elements.forEach((element) => {
+          if (!element.validate()) {
+            this.invalid = true;
+          }
+        });
+        return !this.invalid;
       }
 
     }
