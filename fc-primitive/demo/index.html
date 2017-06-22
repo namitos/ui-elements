@@ -11,6 +11,7 @@
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../../iron-form/iron-form.html">
     <link rel="import" href="../fc-primitive.html">
 
     <custom-style>
@@ -56,6 +57,24 @@
               </div>
             </template>
           </dom-bind>
+        </template>
+      </demo-snippet>
+
+      <h3>Basic fc-primitive demo</h3>
+      <demo-snippet>
+        <template>
+          <iron-form>
+            <form>
+              <fc-primitive schema='
+                {
+                  "label": "str",
+                  "type": "string",
+                  "required": true
+                }
+              '></fc-primitive>
+              <button>submit</button>
+            </form>
+          </iron-form>
         </template>
       </demo-snippet>
     </div>

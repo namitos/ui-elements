@@ -1,5 +1,7 @@
 <link rel="import" href="../../polymer/polymer-element.html">
 
+<link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
+
 <link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
 
@@ -25,7 +27,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class FcPrimitive extends Polymer.Element {
+    class FcPrimitive extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
 
       static get is() {
         return 'fc-primitive';
@@ -43,6 +45,8 @@
 
       static get observers() {
         return [
+          '_valueChanged(value)',
+          '_invalidChanged(invalid)',
           '_setElementValue(_element, value)'
         ]
       }
@@ -52,7 +56,7 @@
 
         this._handleChange = this._handleChange.bind(this);
 
-        const {widget, type, label} = this.schema;
+        const {widget, type, label, required} = this.schema;
 
         let el;
 
@@ -77,6 +81,7 @@
         }
 
         if (el) {
+          el.required = required;
           this._element = el;
           this.root.appendChild(this._element);
           this._element.addEventListener('change', this._handleChange);
@@ -96,6 +101,26 @@
         const {widget, type} = this.schema;
         if (this._element) {
           this._element[!widget && type === 'boolean' ? 'checked' : 'value'] = this.value;
+        }
+      }
+
+      _getValidity() {
+        const {required} = this.schema;
+        if (required) {
+          this.invalid = !this.value;
+        } else {
+          this.invalid = false;
+        }
+        return !this.invalid;
+      }
+
+      _valueChanged() {
+        this.invalid = false;
+      }
+
+      _invalidChanged() {
+        if (this._element) {
+          this._element.invalid = this.invalid;
         }
       }
 
