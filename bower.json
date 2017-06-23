@@ -26,8 +26,11 @@
     "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#2.0",
     "paper-toast": "PolymerElements/paper-toast#2.0",
     "paper-fab": "PolymerElements/paper-fab#2.0",
+    "paper-radio-group": "PolymerElements/paper-radio-group#2.0",
+    "paper-radio-button": "PolymerElements/paper-radio-button#2.0",
     "gold-phone-input": "PolymerElements/gold-phone-input#2.0-preview",
     "app-elements": "PolymerElements/app-elements#_auto_generated_v2_preview",
+    "google-map": "GoogleWebComponents/google-map#2.0-preview",
     "moment": "^2.18.1",
     "socket.io-client": "socketio/socket.io-client"
   },
