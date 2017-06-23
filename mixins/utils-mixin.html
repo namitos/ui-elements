@@ -1,0 +1,25 @@
+<link rel="import" href="../util/moment.html">
+
+<script>
+  window.UtilsMixin = (base) => class extends base {
+    _eq(a, b) {
+      return a === b;
+    }
+    _neq(a, b) {
+      return a !== b;
+    }
+    _format(datetime, str) {
+      return moment(datetime).format(str);
+    }
+    _arr2obj(arr, k, v) {
+      const result = {};
+      arr.forEach((item) => {
+        result[item[k]] = item[v];
+      });
+      return result;
+    }
+    _permission() {
+      return user.permission(...arguments);
+    }
+  }
+</script>
