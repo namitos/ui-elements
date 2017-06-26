@@ -10,6 +10,7 @@
 
     <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../../iron-form/iron-form.html">
     <link rel="import" href="../ui-input-image.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -35,6 +36,17 @@
             const multipleInput = document.getElementsByClassName('multiple')[0];
             multipleInput.addEventListener('error', (e) => console.log(e.detail));
           </script>
+        </template>
+      </demo-snippet>
+      <h3>Multiple ui-input-image demo</h3>
+      <demo-snippet>
+        <template>
+          <iron-form>
+            <form>
+              <ui-input-image required auto-validate accept="image/jpeg,image/png"></ui-input-image>
+              <button>submit</button>
+            </form>
+          </iron-form>
         </template>
       </demo-snippet>
     </div>

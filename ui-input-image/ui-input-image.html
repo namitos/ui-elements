@@ -2,6 +2,7 @@
 <link rel="import" href="../../polymer/polymer-element.html">
 <!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../paper-button/paper-button.html">
@@ -19,22 +20,22 @@
 <dom-module id="ui-input-image">
   <template>
     <style>
-      html {
-        --upload-button-styles: {
-          margin: 0;
-        }
-      }
-
       :host {
         display: block;
         box-sizing: border-box;
         @apply --paper-font-common-base;
       }
 
+      :host([invalid]) #dropzone{
+        border: 2px solid var(--paper-deep-orange-a700);
+        padding: 15px;
+      }
+
       #dropzone {
         border: 1px dashed var(--paper-grey-500);
         border-radius: 3px;
         padding: 16px;
+        box-sizing: border-box;
       }
 
       #dropzone.dragover {
@@ -48,7 +49,9 @@
       }
 
       .buttons paper-button {
-        @apply --upload-button-styles;
+        margin: 0;
+        background-color: var(--button-bg-color, #fff);
+        color: var(--button-color, --text-primary-color);
       }
 
       .drop-label {
@@ -60,6 +63,7 @@
 
       .drop-label iron-icon {
         margin: 0 8px;
+        flex-shrink: 0;
       }
 
       .files {
@@ -83,6 +87,7 @@
       .img-wrapper img {
         display: block;
         max-width: 250px;
+        max-height: 250px;
       }
     </style>
 
@@ -111,10 +116,22 @@
   </template>
   <script>
     /** @polymerElement */
-    class UiInputImage extends Polymer.Element {
-      static get is() { return 'ui-input-image'; }
+    class UiInputImage extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
+
+      static get is() { 
+        return 'ui-input-image'; 
+      }
+
       static get properties() {
         return {
+          required: {
+            type: Boolean,
+            value: false
+          },
+          autoValidate: {
+            type: Boolean,
+            value: false
+          },
           accept: {
             type: String,
             value: ''
@@ -125,10 +142,15 @@
           },
           value: {
             type: Array,
-            notify: true,
-            value: () => []
+            notify: true
           }
         };
+      }
+
+      static get observers() {
+        return [
+          '_valueChanged(value.*)'
+        ];
       }
       
       connectedCallback() {
@@ -144,7 +166,7 @@
         this.$.dropzone.addEventListener('drop', (e) => {
           e.preventDefault();
           this.$.dropzone.classList.remove('dragover');
-          let { files } = e.dataTransfer;
+          let {files} = e.dataTransfer;
           if (!this.multiple && files.length > 1) {
             this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Необходимо выбрать один файл'}}));
           } else {
@@ -154,7 +176,7 @@
       }
 
       _fileInputChanged() {
-        const { files } = this.$.fileInput;
+        const {files} = this.$.fileInput;
         this._readFiles(files);
       }
 
@@ -164,7 +186,7 @@
 
       _readFiles(files) { 
         if (files.length) {
-          if (!this.multiple) {
+          if (!this.multiple || !this.value) {
             this.set('value', []);
           }
           const mimeTypes = this.accept.split(',');
@@ -192,6 +214,20 @@
       _removeFile(e) {
         this.splice('value', e.model.index, 1);
       }
+
+      _valueChanged() {
+        this.autoValidate && this.validate();
+      }
+
+      _getValidity() {  //override method
+        if (this.required) {
+          this.invalid = !(this.value && this.value.length);
+        } else {
+          this.invalid = false;
+        }
+        return !this.invalid;
+      }
+
     }
 
     window.customElements.define(UiInputImage.is, UiInputImage);
