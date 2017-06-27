@@ -31,7 +31,7 @@
 
     <div>[[schema.label]]</div>
 
-    <template is="dom-if" if="[[_eqSome(schema.items.type, 'string', 'number', 'boolean')]]">
+    <template is="dom-if" if="[[_eqSome(schema.items.type, 'string', 'number', 'integer', 'boolean')]]">
       <template is="dom-repeat" items="[[value]]">
         <div class="row">
           <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-primitive>

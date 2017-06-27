@@ -19,7 +19,7 @@
 
     <template is="dom-repeat" items="[[_props2arr(schema.properties)]]">
 
-      <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'boolean')]]">
+      <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'integer', 'boolean')]]">
         <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value)]]" on-change="_fieldChanged"></fc-primitive>
       </template>
 
