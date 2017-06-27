@@ -83,8 +83,10 @@
         if (el) {
           el.required = required;
           el.schema = this.schema;
+          this.schema.attributes && Object.assign(el, this.schema.attributes);
           this._element = el;
           this.root.appendChild(this._element);
+          this._element.addEventListener('value-changed', this._handleChange);
           this._element.addEventListener('change', this._handleChange);
           this._element.addEventListener('input', this._handleChange);
         }

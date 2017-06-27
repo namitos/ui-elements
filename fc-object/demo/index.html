@@ -13,6 +13,7 @@
     <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
     <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
     <link rel="import" href="../../../iron-form/iron-form.html">
+    <link rel="import" href="../../ui-multiselect/ui-multiselect.html">
     <link rel="import" href="../fc-object.html">
 
     <custom-style>
@@ -73,10 +74,14 @@
                         "arrProp": {
                           "type": "array",
                           "label": "arrProp",
+                          "widget": "ui-multiselect",
+                          "attributes": {
+                            "options": {
+                              "asd": "123"
+                            }
+                          },
                           "items": {
-                            "type": "string",
-                            "label": "arrItem",
-                            "required": true
+                            "type": "string"
                           }
                         }
                       }

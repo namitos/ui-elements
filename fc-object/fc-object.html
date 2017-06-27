@@ -19,16 +19,23 @@
 
     <template is="dom-repeat" items="[[_props2arr(schema.properties)]]">
 
-      <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'integer', 'boolean')]]">
-        <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value)]]" on-change="_fieldChanged"></fc-primitive>
+      <template is="dom-if" if="[[item.schema.widget]]">
+        <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-primitive>
       </template>
 
-      <template is="dom-if" if="[[_eqSome(item.schema.type, 'object')]]">
-        <fc-object schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>
-      </template>
+      <template is="dom-if" if="[[!item.schema.widget]]">
+        
+        <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'integer', 'boolean')]]">
+          <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-primitive>
+        </template>
 
-      <template is="dom-if" if="[[_eqSome(item.schema.type, 'array')]]">
-        <fc-array schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>></fc-array>
+        <template is="dom-if" if="[[_eqSome(item.schema.type, 'object')]]">
+          <fc-object schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>
+        </template>
+
+        <template is="dom-if" if="[[_eqSome(item.schema.type, 'array')]]">
+          <fc-array schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-object>></fc-array>
+        </template>
       </template>
 
     </template>
