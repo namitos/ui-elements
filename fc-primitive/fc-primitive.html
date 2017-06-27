@@ -68,7 +68,7 @@
             el = document.createElement('paper-input');
             el.type = 'text';
             el.label = label;
-          } else if (type === 'number') {
+          } else if (type === 'number' || type === 'integer') {
             el = document.createElement('paper-input');
             el.type = 'number';
             el.label = label;
@@ -93,7 +93,14 @@
       _handleChange(e) {
         e.stopPropagation();
         const {widget, type} = this.schema;
-        const {checked, value} = this._element;
+        let {checked, value} = this._element;
+        if (value) {
+          if (type === 'integer') {
+            value = parseInt(value);
+          } else if (type === 'number') {
+            value = parseFloat(value);
+          }
+        }
         this.value = !widget && type === 'boolean' ? checked : value;
         this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
       }
