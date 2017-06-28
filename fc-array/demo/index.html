@@ -1,32 +1,35 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>fc-array demo</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <title>fc-array demo</title>
 
-    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
-    <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
-    <link rel="import" href="../fc-array.html">
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Array of strings demo</h3>
-      <demo-snippet>
-        <template>
-          <dom-bind>
-            <template>
-              <fc-array value="{{strArray}}" schema='
+  <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
+  <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
+  <link rel="import" href="../fc-array.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Array of strings demo</h3>
+    <demo-snippet>
+      <template>
+        <dom-bind>
+          <template>
+            <fc-array value="{{strArray}}" schema='
                 {
                   "type": "array",
                   "label": "string array",
@@ -36,25 +39,25 @@
                   }
                 }
               '></fc-array>
-              <div>
-                <span>value: </span>
-                <dom-repeat items="[[strArray]]">
-                  <template>
-                    <span>[[item]] </span>
-                  </template>
-                </dom-repeat>
-              </div>
-            </template>
-          </dom-bind>
-        </template>
-      </demo-snippet>
+            <div>
+              <span>value: </span>
+              <dom-repeat items="[[strArray]]">
+                <template>
+                  <span>[[item]] </span>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+        </dom-bind>
+      </template>
+    </demo-snippet>
 
-      <h3>Array of objects demo</h3>
-      <demo-snippet>
-        <template>
-          <dom-bind>
-            <template>
-              <fc-array value="{{objArray}}" schema='
+    <h3>Array of objects demo</h3>
+    <demo-snippet>
+      <template>
+        <dom-bind>
+          <template>
+            <fc-array value="{{objArray}}" schema='
                 {
                   "type": "array",
                   "label": "obj array",
@@ -74,25 +77,25 @@
                   }
                 }
               '></fc-array>
-              <div>
-                <span>value: </span>
-                <dom-repeat items="[[objArray]]">
-                  <template>
-                    <div>str: [[item.str]] num: [[item.num]]</div>
-                  </template>
-                </dom-repeat>
-              </div>
-            </template>
-          </dom-bind>
-        </template>
-      </demo-snippet>
+            <div>
+              <span>value: </span>
+              <dom-repeat items="[[objArray]]">
+                <template>
+                  <div>str: [[item.str]] num: [[item.num]]</div>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+        </dom-bind>
+      </template>
+    </demo-snippet>
 
-      <h3>Nested array demo</h3>
-      <demo-snippet>
-        <template>
-          <dom-bind>
-            <template>
-              <fc-array value="{{arrArray}}" schema='
+    <h3>Nested array demo</h3>
+    <demo-snippet>
+      <template>
+        <dom-bind id="azaza">
+          <template>
+            <fc-array value="{{arrArray}}" schema='
                 {
                   "type": "array",
                   "label": "nested arrays",
@@ -106,24 +109,36 @@
                   }
                 }
               '></fc-array>
-              <div>
-                <span>value: </span>
-                <dom-repeat items="[[arrArray]]" as="nestedArray">
-                  <template>
-                    <div>
-                      <dom-repeat items="[[nestedArray]]">
-                        <template>
-                          <span>[[item]] </span>
-                        </template>
-                      </dom-repeat>
-                    </div>
-                  </template>
-                </dom-repeat>
-              </div>
-            </template>
-          </dom-bind>
-        </template>
-      </demo-snippet>
-    </div>
-  </body>
+            <div>
+              <span>value: </span>
+              <dom-repeat items="[[arrArray]]" as="nestedArray">
+                <template>
+                  <div>
+                    Array: ([[nestedArray.length]]); items:
+                    <dom-repeat items="[[nestedArray]]">
+                      <template>
+                        <span>[[item]] </span>
+                      </template>
+                    </dom-repeat>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+        </dom-bind>
+        <script>
+          document.getElementById('azaza').arrArray = [
+            ['11', '22', '33', '44', '55'],
+            ['11', '22', '33', '44', '55']
+          ]
+          document.getElementById('azaza')._json = function (obj) {
+            return JSON.stringify(obj)
+          }
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+
+</body>
+
 </html>

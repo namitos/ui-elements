@@ -15,7 +15,7 @@
 <dom-module id="fc-array">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
 
@@ -24,7 +24,7 @@
         @apply --layout-center;
       }
 
-      .row > *:first-child {
+      .row>*:first-child {
         @apply --layout-flex;
       }
     </style>
@@ -34,7 +34,7 @@
     <template is="dom-if" if="[[schema.items.widget]]">
       <template is="dom-repeat" items="[[value]]">
         <div class="row">
-          <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-primitive>
+          <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value, value.splices)]]" on-change="_itemChanged"></fc-primitive>
           <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
         </div>
       </template>
@@ -44,7 +44,7 @@
       <template is="dom-if" if="[[_eqSome(schema.items.type, 'string', 'number', 'integer', 'boolean')]]">
         <template is="dom-repeat" items="[[value]]">
           <div class="row">
-            <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-primitive>
+            <fc-primitive schema="[[schema.items]]" value="[[_setValue(index, value, value.splices)]]" on-change="_itemChanged"></fc-primitive>
             <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
           </div>
         </template>
@@ -53,7 +53,7 @@
       <template is="dom-if" if="[[_eqSome(schema.items.type, 'object')]]">
         <template is="dom-repeat" items="[[value]]">
           <div class="row">
-            <fc-object schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-object>
+            <fc-object schema="[[schema.items]]" value="[[_setValue(index, value, value.splices)]]" on-change="_itemChanged"></fc-object>
             <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
           </div>
         </template>
@@ -62,7 +62,7 @@
       <template is="dom-if" if="[[_eqSome(schema.items.type, 'array')]]">
         <template is="dom-repeat" items="[[value]]">
           <div class="row">
-            <fc-array schema="[[schema.items]]" value="[[_setValue(index, value)]]" on-change="_itemChanged"></fc-array>
+            <fc-array schema="[[schema.items]]" value="[[_setValue(index, value, value.splices)]]" on-change="_itemChanged"></fc-array>
             <paper-icon-button icon="icons:clear" on-click="removeItem"></paper-icon-button>
           </div>
         </template>
@@ -105,7 +105,9 @@
       connectedCallback() {
         super.connectedCallback();
 
-        const {type} = this.schema;
+        const {
+          type
+        } = this.schema;
 
         if (type !== 'array') {
           console.warn(`Unexpected schema type: "${type}"`);
@@ -113,23 +115,36 @@
       }
 
       addItem() {
-        const {items: {type}} = this.schema;
+        const {
+          items: {
+            type
+          }
+        } = this.schema;
         let item;
         if (type === 'object') {
           item = {};
         } else if (type === 'array') {
           item = [];
         }
-        this.value.push(item);
-        this.value = this.value.slice();
-        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+        this.push('value', item);
+        this.dispatchEvent(new CustomEvent('change', {
+          detail: {
+            field: this.value.length - 1,
+            value: this.value
+          }
+        }));
       }
 
       removeItem(e) {
-        const {index} = e.model;
-        this.value.splice(index, 1);
-        this.value = this.value.slice();
-        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+        const {
+          index
+        } = e.model;
+        this.splice('value', index, 1);
+        this.dispatchEvent(new CustomEvent('change', {
+          detail: {
+            value: this.value
+          }
+        }));
       }
 
       _setValue(index, value) {
@@ -139,18 +154,36 @@
       }
 
       _itemChanged(e) {
-        const {index} = e.model;
-        const {value} = e.detail;
-        this.value[index] = value;
-        this.value = this.value.slice();
-        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+        const {
+          index
+        } = e.model;
+        const {
+          value,
+          field
+        } = e.detail;
+
+        if (value) {
+          if (field !== this.undefined) {
+            this.set(`value.${index}.${field}`, value[field]);
+            this.notifyPath(`value.${index}.${field}`);
+          } else {
+            this.set(`value.${index}`, value);
+            this.notifyPath(`value.${index}`);
+          }
+          this.dispatchEvent(new CustomEvent('change', {
+            detail: {
+              field: index,
+              value: this.value
+            }
+          }));
+        }
       }
 
       _eqSome(a, ...rest) {
         return rest.some((item) => item === a);
       }
 
-       _getValidity() {
+      _getValidity() {
         this.invalid = false;
         const elements = [];
         const arrays = this.root.querySelectorAll('fc-array');

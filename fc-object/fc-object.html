@@ -10,7 +10,7 @@
 <dom-module id="fc-object">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
     </style>
@@ -24,7 +24,7 @@
       </template>
 
       <template is="dom-if" if="[[!item.schema.widget]]">
-        
+
         <template is="dom-if" if="[[_eqSome(item.schema.type, 'string', 'number', 'integer', 'boolean')]]">
           <fc-primitive schema="[[item.schema]]" value="[[_setValue(item.field, value, item.schema)]]" on-change="_fieldChanged"></fc-primitive>
         </template>
@@ -71,9 +71,9 @@
 
       connectedCallback() {
         super.connectedCallback();
-
-        const {type} = this.schema;
-
+        const {
+          type
+        } = this.schema;
         if (type !== 'object') {
           console.warn(`Unexpected schema type: "${type}"`);
         }
@@ -93,11 +93,20 @@
       }
 
       _fieldChanged(e) {
-        const {item} = e.model;
-        const {value} = e.detail;
+        const {
+          item
+        } = e.model;
+        const {
+          value
+        } = e.detail;
         this.set(`value.${item.field}`, value);
         this.notifyPath(`value.${item.field}`);
-        this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
+        this.dispatchEvent(new CustomEvent('change', {
+          detail: {
+            field: item.field,
+            value: this.value
+          }
+        }));
       }
 
       _props2arr(obj) {
@@ -108,7 +117,7 @@
           };
         })
       }
-      
+
       _eqSome(a, ...rest) {
         return rest.some((item) => item === a);
       }
