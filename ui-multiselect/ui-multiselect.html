@@ -109,6 +109,11 @@
         ]
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        this.root.addEventListener('iron-overlay-closed', (e) => e.stopPropagation());
+      }
+
       _valueChange() {
         this.invalid = false;
         this._value = this.value.map((key) => this.options[key]).join(', ');

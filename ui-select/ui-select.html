@@ -66,6 +66,11 @@
         };
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        this.root.addEventListener('iron-overlay-closed', (e) => e.stopPropagation());
+      }
+
       _optionsChange() {
         this._options = this._obj2arr(this.options);
         if (!this.options[this.value]) {
