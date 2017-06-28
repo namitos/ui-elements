@@ -96,7 +96,7 @@
         const {item} = e.model;
         const {value} = e.detail;
         this.value[item.field] = value;
-        this.value = Object.assign({}, this.value);
+        this.value = Object.assign(new this.value.constructor(), this.value);
         this.dispatchEvent(new CustomEvent('change', {detail: {value: this.value}}));
       }
 
