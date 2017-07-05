@@ -13,9 +13,22 @@
        :host {
         display: block;
       }
+
+      .label {
+        font-size: 17px;
+        font-weight: 500;
+      }
+
+      fc-object,
+      fc-array {
+        margin: 0 0 8px 0;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+      }
     </style>
 
-    <div>[[schema.label]]</div>
+    <div class="label">[[schema.label]]</div>
 
     <template is="dom-repeat" items="[[_props2arr(schema.properties)]]">
 
