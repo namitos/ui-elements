@@ -116,6 +116,9 @@
 
       _valueChange() {
         this.invalid = false;
+        if (!this.value) {
+          this.value = [];
+        }
         this._value = this.value.map((key) => this.options[key]).join(', ');
       }
 
