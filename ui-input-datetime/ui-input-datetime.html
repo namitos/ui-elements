@@ -19,7 +19,7 @@
         display: block;
       }
     </style>
-    <paper-input label="[[label]]" invalid="[[invalid]]" label="{{label}}" value="{{_value}}" type="datetime-local"></paper-input>
+    <paper-input step="[[step]]" label="[[label]]" invalid="[[invalid]]" label="{{label}}" value="{{_value}}" type="datetime-local"></paper-input>
   </template>
 
   <script>
@@ -41,7 +41,8 @@
             observer: '_valuePrivateChanged'
           },
           label: String,
-          required: Boolean
+          required: Boolean,
+          step: String
         };
       }
 
