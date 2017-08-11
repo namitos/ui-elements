@@ -95,10 +95,10 @@
 
     <div id="dropzone">
       <div class="buttons">
-        <paper-button raised on-click="selectFiles">Выбрать файл</paper-button>
+        <paper-button raised on-click="selectFiles">[[buttonText]]</paper-button>
         <div class="drop-label">
           <iron-icon icon="file-upload"></iron-icon>
-          <span>Перетащите файлы сюда</span>
+          <span>[[dropzoneText]]</span>
         </div>
       </div>
       <template is="dom-if" if="[[value.length]]">
@@ -143,6 +143,14 @@
           value: {
             type: Array,
             notify: true
+          },
+          buttonText: {
+            type: String,
+            value: 'Upload files'
+          },
+          dropzoneText: {
+            type: String,
+            value: 'Drop files here...'
           }
         };
       }
