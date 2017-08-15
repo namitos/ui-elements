@@ -31,7 +31,8 @@
     "app-elements": "PolymerElements/app-elements#_auto_generated_v2_preview",
     "google-map": "GoogleWebComponents/google-map#2.0-preview",
     "moment": "^2.18.1",
-    "socket.io-client": "socketio/socket.io-client"
+    "socket.io-client": "socketio/socket.io-client",
+    "ace": "ajaxorg/ace-builds"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0"
