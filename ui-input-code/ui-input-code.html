@@ -691,6 +691,9 @@
 
       connectedCallback() {
         super.connectedCallback();
+        if (!this.value) {
+          this.value = '';
+        }
         this.editor = ace.edit(this.$.editor);
         this.editor.setValue(this.value);
         this.editor.setTheme("ace/theme/monokai");
