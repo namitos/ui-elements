@@ -9,7 +9,7 @@
       return a !== b;
     }
     _format(datetime, str) {
-      return moment(datetime).format(str);
+      return datetime ? moment(datetime).format(str) : '';
     }
     _arr2obj(arr, k, v) {
       const result = {};
