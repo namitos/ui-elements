@@ -20,13 +20,13 @@
 <dom-module id="ui-input-image">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
         box-sizing: border-box;
         @apply --paper-font-common-base;
       }
 
-      :host([invalid]) #dropzone{
+       :host([invalid]) #dropzone {
         border: 2px solid var(--paper-deep-orange-a700);
         padding: 15px;
       }
@@ -118,8 +118,8 @@
     /** @polymerElement */
     class UiInputImage extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
 
-      static get is() { 
-        return 'ui-input-image'; 
+      static get is() {
+        return 'ui-input-image';
       }
 
       static get properties() {
@@ -134,7 +134,7 @@
           },
           accept: {
             type: String,
-            value: ''
+            value: 'image/jpeg,image/png,image/gif'
           },
           multiple: {
             type: Boolean,
@@ -160,7 +160,7 @@
           '_valueChanged(value.*)'
         ];
       }
-      
+
       connectedCallback() {
         super.connectedCallback();
         this.$.dropzone.addEventListener('dragover', (e) => {
@@ -174,9 +174,9 @@
         this.$.dropzone.addEventListener('drop', (e) => {
           e.preventDefault();
           this.$.dropzone.classList.remove('dragover');
-          let {files} = e.dataTransfer;
+          let { files } = e.dataTransfer;
           if (!this.multiple && files.length > 1) {
-            this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Необходимо выбрать один файл'}}));
+            this.dispatchEvent(new CustomEvent('error', { detail: { message: 'Необходимо выбрать один файл' } }));
           } else {
             this._readFiles(files);
           }
@@ -184,7 +184,7 @@
       }
 
       _fileInputChanged() {
-        const {files} = this.$.fileInput;
+        const { files } = this.$.fileInput;
         this._readFiles(files);
       }
 
@@ -192,9 +192,9 @@
         this.$.fileInput.click();
       }
 
-      _readFiles(files) { 
+      _readFiles(files) {
         if (files.length) {
-          if (!this.multiple || !this.value) {
+          if (!this.value) {
             this.set('value', []);
           }
           const mimeTypes = this.accept.split(',');
@@ -202,17 +202,17 @@
             if (mimeTypes.includes(file.type)) {
               return true;
             } else {
-              this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Неподходящий формат файла'}}));
+              this.dispatchEvent(new CustomEvent('error', { detail: { message: 'Неподходящий формат файла' } }));
               return false;
             }
           });
           Array.prototype.forEach.call(filteredFiles, (file, i) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-              this.push('value', e.target.result);
+              this.multiple ? this.push('value', e.target.result) : this.set('value', [e.target.result]);
             }
             reader.onerror = (e) => {
-              this.dispatchEvent(new CustomEvent('error', {detail: {message: 'Ошибка чтения файла'}}));
+              this.dispatchEvent(new CustomEvent('error', { detail: { message: 'Ошибка чтения файла' } }));
             }
             reader.readAsDataURL(file)
           });
@@ -227,7 +227,7 @@
         this.autoValidate && this.validate();
       }
 
-      _getValidity() {  //override method
+      _getValidity() { //override method
         if (this.required) {
           this.invalid = !(this.value && this.value.length);
         } else {
