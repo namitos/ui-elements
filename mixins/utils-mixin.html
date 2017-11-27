@@ -8,15 +8,41 @@
     _neq(a, b) {
       return a !== b;
     }
+    _gt(a, b) {
+      return a > b
+    }
+    _includes() {
+      let args = [...arguments];
+      let what = args.pop();
+      return args.includes(what);
+    }
     _format(datetime, str) {
       return datetime ? moment(datetime).format(str) : '';
     }
     _arr2obj(arr, k, v) {
-      const result = {};
-      arr.forEach((item) => {
-        result[item[k]] = item[v];
-      });
-      return result;
+      if (arr) {
+        const result = {};
+        arr.forEach((item) => {
+          result[item[k]] = item[v];
+        });
+        return result;
+      } else {
+        return {}
+      }
+    }
+    _obj2arr(obj) {
+      if (obj) {
+        let arr = [];
+        Object.keys(obj).forEach((key) => {
+          arr.push({
+            key: key,
+            value: obj[key]
+          });
+        });
+        return arr;
+      } else {
+        return []
+      }
     }
     _permission() {
       return user.permission(...arguments);
