@@ -16,7 +16,7 @@
 <dom-module id="ui-select">
   <template>
     <style>
-      :host {
+       :host {
         position: relative;
         display: block;
       }
@@ -30,7 +30,7 @@
         width: 100%;
       }
     </style>
-    <paper-dropdown-menu invalid="[[invalid]]" label="[[label]]" no-animations>
+    <paper-dropdown-menu invalid="[[invalid]]" label="[[label]]" no-label-float="[[noLabelFloat]]" no-animations>
       <paper-listbox slot="dropdown-content" selected="{{value}}" attr-for-selected="value">
         <template is="dom-repeat" items="[[_options]]">
           <paper-item value="[[item.key]]">[[item.value]]</paper-item>
@@ -61,6 +61,7 @@
               return {}
             }
           },
+          noLabelFloat: Boolean,
           label: String,
           required: Boolean,
           _options: Array
@@ -94,7 +95,7 @@
         return arr;
       }
 
-      _getValidity() {  //override method
+      _getValidity() { //override method
         if (this.required) {
           this.invalid = !this.value;
         } else {
