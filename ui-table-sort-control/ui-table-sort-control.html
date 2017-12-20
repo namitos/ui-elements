@@ -15,20 +15,20 @@
 <dom-module id="ui-table-sort-control">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
+        cursor: pointer;
       }
     </style>
-    <template is="dom-if" if="[[_eq(sort.field, field)]]">
-      <template is="dom-if" if="[[_eq(sort.direction, 1)]]">
-        <paper-icon-button icon="icons:arrow-upward" on-click="changeSort"></paper-icon-button>
-      </template>
-      <template is="dom-if" if="[[_eq(sort.direction, -1)]]">
-        <paper-icon-button icon="icons:arrow-downward" on-click="changeSort"></paper-icon-button>
-      </template>
+    <template is="dom-if" if="[[micro]]">
+      <div on-click="changeSort">
+        <span>[[name]]</span>
+        <iron-icon icon="[[_icon(sort.direction, sort.field, field)]]">
+          </paper-icon>
+      </div>
     </template>
-    <template is="dom-if" if="[[!_eq(sort.field, field)]]">
-      <paper-icon-button icon="icons:sort" on-click="changeSort"></paper-icon-button>
+    <template is="dom-if" if="[[!micro]]">
+      <paper-icon-button icon="[[_icon(sort.direction, sort.field, field)]]" on-click="changeSort"></paper-icon-button>
     </template>
   </template>
 
@@ -53,8 +53,10 @@
               }
             }
           },
-          field: {
-            type: String
+          field: String,
+          micro: {
+            type: Boolean,
+            value: false
           }
         };
       }
@@ -68,6 +70,18 @@
           this.set("sort.direction", this.sort.direction === 1 ? -1 : 1);
         } else {
           this.set("sort.field", this.field);
+        }
+      }
+
+      _icon(direction, sortField, field) {
+        if (sortField === field) {
+          if (direction === 1) {
+            return 'icons:expand-less'
+          } else if (direction === -1) {
+            return 'icons:expand-more'
+          } else {}
+        } else {
+          return this.micro ? '' : 'icons:sort';
         }
       }
     }
