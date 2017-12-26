@@ -1,0 +1,58 @@
+<link rel="import" href="../../vendor/polymer/polymer-element.html">
+<!-- <link rel="import" href="../../vendor/polymer/lib/elements/dom-if.html"> -->
+<!-- <link rel="import" href="../../vendor/polymer/lib/elements/dom-repeat.html"> -->
+
+<dom-module id="ui-select-item">
+  <template>
+    <style></style>
+  </template>
+  <script>
+    /** @polymerElement */
+    class UiSelectItem extends Polymer.Element {
+
+      static get is() {
+        return 'ui-select-item';
+      }
+
+      static get properties() {
+        return {
+          item: {
+            type: Object
+          },
+          selected: {
+            type: Boolean,
+            value: false,
+            observer: '_selectedChanged'
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_updateElement(item, selected)'
+        ]
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.element = Object.assign(document.createElement(this.itemElement), { item: this.item, selected: this.selected });
+        this.root.appendChild(this.element);
+      }
+
+      _updateElement() {
+        if (this.element) {
+          this.element.item = this.item;
+          this.element.selected = this.selected;
+        }
+      }
+
+      _selectedChanged() {
+        if (this.element) {
+          this.element.set('selected', this.selected);
+        }
+      }
+    }
+
+    window.customElements.define(UiSelectItem.is, UiSelectItem);
+  </script>
+</dom-module>

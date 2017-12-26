@@ -1,10 +1,14 @@
 <link rel="import" href="../../polymer/polymer-element.html">
-<!--<link rel="import" href="../../polymer/lib/elements/dom-if.html">-->
-<!--<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">-->
-<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../../paper-input/paper-input.html">
 <link rel="import" href="../../paper-listbox/paper-listbox.html">
-<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../ui-select-item/ui-select-item.html">
 
 <!--
 `ui-select`
@@ -21,27 +25,106 @@
         display: block;
       }
 
-      paper-item {
-        white-space: nowrap;
-        cursor: pointer;
+      paper-input.main-input {
+        --paper-input-container-color: var(--ui-select-container-color);
+        --paper-input-container-focus-color: var(--ui-select-container-focus-color);
+        --paper-input-container-invalid-color: var(--ui-select-container-invalid-color);
+        --paper-input-container-input-color: var(--ui-select-container-input-color);
       }
 
-      paper-dropdown-menu {
-        width: 100%;
+      paper-input > iron-icon {
+        color: var(--disabled-text-color);
+      }
+
+      iron-dropdown {
+        @apply --shadow-elevation-2dp;
+        background-color: #fff;
+      }
+
+      paper-listbox {
+        padding: 0;
+        overflow-y: auto;
+      }
+
+      .paper-item {
+        cursor: pointer;
+        @apply --paper-font-subhead;
+        min-height: var(--paper-item-min-height, 48px);
+        padding: 0px 16px;
+        line-height: 48px;
+      }
+
+      .paper-item.iron-selected {
+        font-weight: var(--paper-item-selected-weight, bold);
+        @apply --paper-item-selected;
+      }
+
+      .paper-item:focus {
+        position: relative;
+        outline: 0;
+        @apply --paper-item-focused;
+      }
+
+      .paper-item iron-icon {
+        margin-right: 8px;
+      }
+
+      .paper-item .a {
+        display: none;
+      }
+
+      .paper-item .b {
+        display: block;
+      }
+
+      .paper-item[selected] .a {
+        display: block;
+      }
+
+      .paper-item[selected] .b {
+        display: none;
+      }
+
+      .filter {
+        margin: 0 8px;
       }
     </style>
-    <paper-dropdown-menu invalid="[[invalid]]" label="[[label]]" no-label-float="[[noLabelFloat]]" no-animations>
-      <paper-listbox slot="dropdown-content" selected="{{value}}" attr-for-selected="value">
-        <template is="dom-repeat" items="[[_options]]">
-          <paper-item value="[[item.key]]">[[item.value]]</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
-  </template>
 
+    <paper-input class="main-input" no-label-float="[[noLabelFloat]]" disabled="[[disabled]]" invalid="[[invalid]]" label="[[label]]" placeholder="[[placeholder]]" value="{{_value}}" readonly on-click="open">
+      <iron-icon icon="icons:arrow-drop-down" suffix="" slot="suffix"></iron-icon>
+    </paper-input>
+    <iron-dropdown id="dropdown" dynamic-align="[[dynamicAlign]]">
+      <div slot="dropdown-content" id="dropdownContent">
+        <template is="dom-if" if="[[filter]]">
+          <paper-input autofocus class="filter" value="{{_filterStr}}" label="Фильтр"></paper-input>
+        </template>
+        <paper-listbox id="listbox" multi$="{{multiple}}" selected-attribute="selected" attr-for-selected="value" selected-values="{{value}}" selected="{{value}}">
+          <template is="dom-repeat" items="[[_options]]" filter="{{_computeFilter(_filterStr)}}">
+
+            <template is="dom-if" if="[[itemElement]]">
+              <ui-select-item value="[[item._id]]" item-element="[[itemElement]]" item="[[item]]" on-click="_handleSelect"></ui-select-item>
+            </template>
+
+            <template is="dom-if" if="[[!itemElement]]">
+              <div class="paper-item" value="[[item._id]]" on-click="_handleSelect">
+                <template is="dom-if" if="[[checkboxes]]">
+                  <iron-icon class="a" icon="icons:check-box"></iron-icon>
+                  <iron-icon class="b" icon="icons:check-box-outline-blank"></iron-icon>
+                </template>
+                [[item.name]]
+              </div>
+            </template>
+
+          </template>
+        </paper-listbox>
+      </div>
+    </iron-dropdown>
+
+  </template>
   <script>
     /** @polymerElement */
     class UiSelect extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
+
       static get is() {
         return 'ui-select';
       }
@@ -51,45 +134,127 @@
           value: {
             type: String,
             notify: true,
-            value: '',
-            observer: '_valueChange'
+            value: ''
           },
           options: {
             type: Object,
-            observer: '_optionsChange',
             value: () => {
-              return {}
+              return {};
             }
           },
-          noLabelFloat: Boolean,
+          dropdownFit: {
+            type: Boolean,
+            value: false
+          },
+          filter: {
+            type: Boolean,
+            value: false
+          },
+          multiple: {
+            type: Boolean,
+            value: false
+          },
+          checkboxes: {
+            type: Boolean,
+            value: false
+          },
+          itemElement: {
+            type: String,
+            value: ''
+          },
+          noLabelFloat: {
+            type: Boolean,
+            value: false
+          },
+          disabled: {
+            type: Boolean,
+            value: false
+          },
+          dynamicAlign: {
+            type: Boolean,
+            value: false
+          },
           label: String,
+          placeholder: String,
           required: Boolean,
-          _options: Array
+          _options: Array,
+          _value: String
         };
+      }
+
+      static get observers() {
+        return [
+          '_setValueStr(value.splices, _options.splices)',
+          '_optionsChange(options)',
+          '_itemsChange(items)'
+        ]
       }
 
       connectedCallback() {
         super.connectedCallback();
-        this.root.addEventListener('iron-overlay-closed', (e) => e.stopPropagation());
+        this.filter && (this.dynamicAlign = false); //crutch
+        this.root.addEventListener('iron-overlay-closed', (e) => {
+          e.stopPropagation();
+          this._filterStr = '';
+        });
+        this.dropdownFit && window.addEventListener('resize', this._resize.bind(this));
+        if (!this.value) {
+          this.set('value', this.multiple ? [] : '');
+        }
+      }
+
+      _handleSelect() {
+        !this.multiple && this.$.dropdown.close();
+      }
+
+      _resize() {
+        const headerHeight = 128;
+        let { width } = this.getBoundingClientRect();
+        this.$.dropdownContent.style.width = width + 'px';
+        const resizeHeight = (e) => {
+          const { top, height } = this.$.dropdownContent.getBoundingClientRect();
+          const styleMaxHeight = parseInt(this.$.dropdownContent.style.maxHeight.split('px')[0]);
+          if (top <= headerHeight && height !== 0 || (styleMaxHeight > height)) {
+            this.$.dropdown.style.top = `${headerHeight}px`;
+            this.$.dropdownContent.style.maxHeight = `${height - headerHeight}px`;
+          }
+          this.root.removeEventListener('iron-overlay-opened', resizeHeight);
+        }
+        this.root.addEventListener('iron-overlay-opened', resizeHeight);
+      }
+
+      open() {
+        this.dropdownFit && this._resize();
+        this.$.listbox._updateSelected(); //crutch
+        this.$.dropdown.open();
+      }
+
+      _setValueStr() {
+        if (this._options) {
+          this.invalid = false;
+          if (!this.value) {
+            this.set('value', this.multiple ? [] : '');
+          }
+          this._value = this._options
+            .filter((option) => this.multiple ? this.value.includes(option._id) : option._id.toString() === this.value.toString())
+            .map((option) => option.name).join(', ');
+        }
       }
 
       _optionsChange() {
         this._options = this._obj2arr(this.options);
-        if (!this.options[this.value]) {
-          this.value = "";
-        }
       }
 
-      _valueChange() {
-        this.invalid = false;
+      _itemsChange() {
+        this._options = this.items;
       }
 
       _obj2arr(obj) {
         let arr = [];
         Object.keys(obj).forEach((key) => {
           arr.push({
-            key: key,
-            value: obj[key]
+            _id: key,
+            name: obj[key]
           });
         });
         return arr;
@@ -97,14 +262,22 @@
 
       _getValidity() { //override method
         if (this.required) {
-          this.invalid = !this.value;
+          this.invalid = !this.value.length;
         } else {
           this.invalid = false;
         }
         return !this.invalid;
       }
-    }
 
+      _computeFilter(string) {
+        if (!string) {
+          return null;
+        } else {
+          return (item) => item.name.toLowerCase().indexOf(string.toLowerCase()) !== -1
+        }
+      }
+
+    }
     window.customElements.define(UiSelect.is, UiSelect);
   </script>
 </dom-module>
