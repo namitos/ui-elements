@@ -8,7 +8,8 @@
 <link rel="import" href="../../paper-listbox/paper-listbox.html">
 <link rel="import" href="../../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../iron-validatable-behavior/iron-validatable-behavior.html">
-<link rel="import" href="../ui-select-item/ui-select-item.html">
+<link rel="import" href="./ui-select-item.html">
+<link rel="import" href="./ui-select-mixin.html">
 
 <!--
 `ui-select`
@@ -124,158 +125,10 @@
   </template>
   <script>
     /** @polymerElement */
-    class UiSelect extends Polymer.mixinBehaviors([Polymer.IronValidatableBehavior], Polymer.Element) {
+    class UiSelect extends UiSelectMixin(Polymer.Element) {
 
       static get is() {
         return 'ui-select';
-      }
-
-      static get properties() {
-        return {
-          value: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          options: {
-            type: Object,
-            value: () => {
-              return {};
-            }
-          },
-          dropdownFit: {
-            type: Boolean,
-            value: false
-          },
-          filter: {
-            type: Boolean,
-            value: false
-          },
-          multiple: {
-            type: Boolean,
-            value: false
-          },
-          checkboxes: {
-            type: Boolean,
-            value: false
-          },
-          itemElement: {
-            type: String,
-            value: ''
-          },
-          noLabelFloat: {
-            type: Boolean,
-            value: false
-          },
-          disabled: {
-            type: Boolean,
-            value: false
-          },
-          dynamicAlign: {
-            type: Boolean,
-            value: false
-          },
-          label: String,
-          placeholder: String,
-          required: Boolean,
-          _options: Array,
-          _value: String
-        };
-      }
-
-      static get observers() {
-        return [
-          '_setValueStr(value.splices, _options.splices)',
-          '_optionsChange(options)',
-          '_itemsChange(items)'
-        ]
-      }
-
-      connectedCallback() {
-        super.connectedCallback();
-        this.filter && (this.dynamicAlign = false); //crutch
-        this.root.addEventListener('iron-overlay-closed', (e) => {
-          e.stopPropagation();
-          this._filterStr = '';
-        });
-        this.dropdownFit && window.addEventListener('resize', this._resize.bind(this));
-        if (!this.value) {
-          this.set('value', this.multiple ? [] : '');
-        }
-      }
-
-      _handleSelect() {
-        !this.multiple && this.$.dropdown.close();
-      }
-
-      _resize() {
-        const headerHeight = 128;
-        let { width } = this.getBoundingClientRect();
-        this.$.dropdownContent.style.width = width + 'px';
-        const resizeHeight = (e) => {
-          const { top, height } = this.$.dropdownContent.getBoundingClientRect();
-          const styleMaxHeight = parseInt(this.$.dropdownContent.style.maxHeight.split('px')[0]);
-          if (top <= headerHeight && height !== 0 || (styleMaxHeight > height)) {
-            this.$.dropdown.style.top = `${headerHeight}px`;
-            this.$.dropdownContent.style.maxHeight = `${height - headerHeight}px`;
-          }
-          this.root.removeEventListener('iron-overlay-opened', resizeHeight);
-        }
-        this.root.addEventListener('iron-overlay-opened', resizeHeight);
-      }
-
-      open() {
-        this.dropdownFit && this._resize();
-        this.$.listbox._updateSelected(); //crutch
-        this.$.dropdown.open();
-      }
-
-      _setValueStr() {
-        if (this._options) {
-          this.invalid = false;
-          if (!this.value) {
-            this.set('value', this.multiple ? [] : '');
-          }
-          this._value = this._options
-            .filter((option) => this.multiple ? this.value.includes(option._id) : option._id.toString() === this.value.toString())
-            .map((option) => option.name).join(', ');
-        }
-      }
-
-      _optionsChange() {
-        this._options = this._obj2arr(this.options);
-      }
-
-      _itemsChange() {
-        this._options = this.items;
-      }
-
-      _obj2arr(obj) {
-        let arr = [];
-        Object.keys(obj).forEach((key) => {
-          arr.push({
-            _id: key,
-            name: obj[key]
-          });
-        });
-        return arr;
-      }
-
-      _getValidity() { //override method
-        if (this.required) {
-          this.invalid = !this.value.length;
-        } else {
-          this.invalid = false;
-        }
-        return !this.invalid;
-      }
-
-      _computeFilter(string) {
-        if (!string) {
-          return null;
-        } else {
-          return (item) => item.name.toLowerCase().indexOf(string.toLowerCase()) !== -1
-        }
       }
 
     }
