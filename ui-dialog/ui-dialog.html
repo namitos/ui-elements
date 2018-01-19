@@ -7,6 +7,7 @@
 <link rel="import" href="../../paper-dialog/paper-dialog.html">
 <link rel="import" href="../../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="./ui-dialog-mixin.html">
 
 <!--
 `ui-dialog`
@@ -74,39 +75,12 @@
 
   <script>
     /** @polymerElement */
-    class UiDialog extends Polymer.Element {
-      static get is() { return 'ui-dialog'; }
-      static get properties() {
-        return {
-          icon: {
-            type: String
-          },
-          title: {
-            type: String
-          },
-          removeAfterHide: {
-            type: Boolean,
-            value: true
-          }
-        };
-      }
+    class UiDialog extends UiDialogMixin(Polymer.Element) {
 
-      connectedCallback() {
-        super.connectedCallback();
-        this.$.dialog.addEventListener('iron-overlay-closed', (e) => {
-          if (this.removeAfterHide && this.parentNode) {
-            this.parentNode.removeChild(this);
-          }
-        })
+      static get is() {
+        return 'ui-dialog';
       }
-
-      open() {
-        this.$.dialog.open();
-      }
-
-      close() {
-        this.$.dialog.close();
-      }
+      
     }
 
     window.customElements.define(UiDialog.is, UiDialog);
