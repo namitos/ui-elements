@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>ui-gallery demo</title>
+
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../../polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../../../iron-form/iron-form.html">
+    <link rel="import" href="../ui-gallery.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic ui-gallery demo</h3>
+      <demo-snippet>
+        <template>
+          <!-- <ui-gallery id="gallery"></ui-gallery> -->
+          <button id="btn">open gallery</button>
+          <script>
+            const button = document.getElementById('btn');
+            button.addEventListener('click', () => {
+              const gallery = document.createElement('ui-gallery');
+              gallery.items = ['https://placehold.it/200x200', 'https://placehold.it/250x250', 'https://placehold.it/300x300'];
+              document.body.appendChild(gallery)
+              gallery.open();
+            })
+          </script>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

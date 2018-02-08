@@ -42,6 +42,11 @@
     "paper-toggle-button": "PolymerElements/paper-toggle-button#^2.0.0",
     "paper-tooltip": "PolymerElements/paper-tooltip#^2.0.1",
     "polymer": "Polymer/polymer#^2.5.0",
-    "socket.io-client": "socketio/socket.io-client#^2.0.4"
+    "socket.io-client": "socketio/socket.io-client#^2.0.4",
+    "iron-swipeable-pages": "GeoloeG/iron-swipeable-pages#2.0-preview"
+  },
+  "resolutions": {
+    "iron-resizable-behavior": "1 - 2",
+    "iron-selector": "1 - 2"
   }
 }
