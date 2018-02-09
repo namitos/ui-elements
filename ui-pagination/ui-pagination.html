@@ -1,0 +1,75 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html"> 
+<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="./ui-pagination-mixin.html">
+
+<!--
+`ui-pagination`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="ui-pagination">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: inline-block;
+      }
+
+      .buttons {
+        display: flex;
+      }
+
+      .buttons paper-button {
+        border-radius: 20px;
+        padding: 8px;
+        min-width: 40px;
+        min-height: 40px;
+        line-height: 1;
+      }
+
+      .buttons paper-button.active-button {
+        background-color: var(--paper-grey-300);
+      }
+
+      ui-select {
+        width: 75px;
+      }
+    </style>
+
+    <div class="buttons">
+      <template is="dom-if" if="[[setItemsPerPage]]">
+        <ui-select no-label-float options="[[itemsPerPageOptions]]" value="{{itemsPerPage}}"></ui-select>
+      </template>
+
+      <paper-button on-click="_toFirst"><iron-icon icon="icons:first-page"></iron-icon></paper-button>
+      <paper-button on-click="_prev"><iron-icon icon="icons:chevron-left"></iron-icon></paper-button>
+
+      <template is="dom-repeat" items="[[_range]]">
+        <paper-button class$="[[_isActive(item, currentPage)]]" on-click="_setCurrentPage">[[item]]</paper-button>
+      </template>
+
+      <paper-button on-click="_next"><iron-icon icon="icons:chevron-right"></iron-icon></paper-button>
+      <paper-button on-click="_toLast"><iron-icon icon="icons:last-page"></iron-icon></paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class UiPagination extends UiPaginationMixin(Polymer.Element) {
+
+      static get is() {
+        return 'ui-pagination';
+      }
+      
+    }
+
+    window.customElements.define(UiPagination.is, UiPagination);
+  </script>
+</dom-module>

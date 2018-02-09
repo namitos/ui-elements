@@ -1,0 +1,112 @@
+<script>
+  window.UiPaginationMixin = (base) => class extends base {
+    static get properties() {
+      return {
+        setItemsPerPage: {
+          type: Boolean,
+          value: false
+        },
+        itemsPerPageOptions: {
+          type: Array,
+          value: () => {
+            return { 10: 10, 25: 25, 50: 50, 100: 100 }
+          }
+        },
+        aroundButtons: {
+          type: Number,
+          value: 2
+        },
+        currentPage: {
+          type: Number,
+          notify: true,
+          value: 1
+        },
+        pagesCount: Number,
+        itemsCount: Number,
+        itemsPerPage: {
+          type: Number,
+          notify: true
+        },
+        _range: {
+          type: Array,
+          value: () => []
+        }
+      };
+    }
+
+    static get observers() {
+      return [
+        '_computeRange(currentPage, itemsCount, itemsPerPage)'
+      ]
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+    }
+
+    _computeRange() {
+      this.pagesCount = Math.ceil(this.itemsCount / parseInt(this.itemsPerPage));
+
+      const range = [this.currentPage];
+
+      for (let i = 1; i <= this.aroundButtons; i++) {
+        if (this.currentPage > 0 && this.currentPage - i > 0) {
+          range.unshift(this.currentPage - i);
+        }
+        if (this.currentPage <= this.pagesCount && this.currentPage + i <= this.pagesCount) {
+          range.push(this.currentPage + i);
+        }
+      }
+
+      if (range.length < (this.aroundButtons * 2) + 1) {
+        const diff = (this.aroundButtons * 2) + 1 - range.length;
+        if (range[range.length - 1] === this.pagesCount) {
+          let firstButton = range[0];
+          for (let i = 1; i <= diff; i++) {
+            if (firstButton - i > 0) {
+              range.unshift(firstButton - i);
+            }
+          }
+        } else {
+          let lastButton = range[range.length - 1];
+          for (let i = 1; i <= diff; i++) {
+            if (lastButton + i <= this.pagesCount) {
+              range.push(lastButton + i);
+            }
+          }
+        } 
+      }
+
+      this.set('_range', range);
+    }
+
+    _setCurrentPage(e) {
+      this.currentPage = e.model.item;
+    }
+
+    _toFirst() {
+      this.currentPage = 1;
+    }
+
+    _toLast() {
+      this.currentPage = this.pagesCount;
+    }
+
+    _next() {
+      if (this.currentPage + 1 <= this.pagesCount) {
+        this.currentPage += 1;
+      }
+    }
+
+    _prev() {
+      if (this.currentPage - 1 > 0) {
+        this.currentPage -= 1;
+      }
+    }
+
+    _isActive(item) {
+      return item == this.currentPage ? 'active-button' : '';
+    }
+
+  }
+</script>
