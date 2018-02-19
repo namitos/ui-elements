@@ -15,7 +15,7 @@
 <dom-module id="ui-table-sort-control">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         cursor: pointer;
       }
@@ -47,9 +47,6 @@
 
       static get properties() {
         return {
-          /**
-           *
-           */
           sort: {
             type: Object,
             notify: true,
@@ -63,6 +60,10 @@
           micro: {
             type: Boolean,
             value: false
+          },
+          name: {
+            type: String,
+            value: ''
           }
         };
       }
