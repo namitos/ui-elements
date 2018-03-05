@@ -21,7 +21,7 @@
 <dom-module id="ui-select">
   <template>
     <style>
-       :host {
+      :host {
         position: relative;
         display: block;
       }
@@ -59,6 +59,11 @@
       .paper-item.iron-selected {
         font-weight: var(--paper-item-selected-weight, bold);
         @apply --paper-item-selected;
+      }
+
+      .paper-item:hover,
+      .paper-item.iron-selected {
+        background: rgba(0, 0, 0, .03);
       }
 
       .paper-item:focus {
