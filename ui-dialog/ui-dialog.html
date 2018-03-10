@@ -22,6 +22,7 @@
       :host {
         display: block;
       }
+
       paper-dialog {
         width: 640px;
         top: 0 !important;
@@ -58,8 +59,7 @@
         }
       }
     </style>
-
-    <paper-dialog id="dialog" with-backdrop no-cancel-on-outside-click>
+    <paper-dialog id="dialog" with-backdrop no-cancel-on-outside-click="[[noCancelOnOutsideClick]]">
       <app-toolbar>
         <template is="dom-if" if="[[icon]]">
           <iron-icon icon="[[icon]]" class="icon"></iron-icon>
@@ -80,7 +80,7 @@
       static get is() {
         return 'ui-dialog';
       }
-      
+
     }
 
     window.customElements.define(UiDialog.is, UiDialog);
