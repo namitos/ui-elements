@@ -20,13 +20,13 @@
 <dom-module id="ui-input-image">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
         box-sizing: border-box;
         @apply --paper-font-common-base;
       }
 
-       :host([invalid]) #dropzone {
+      :host([invalid]) #dropzone {
         border: 2px solid var(--paper-deep-orange-a700);
         padding: 15px;
       }
@@ -106,7 +106,7 @@
           <template is="dom-repeat" items="[[value]]">
             <div class="img-wrapper">
               <paper-icon-button icon="clear" on-click="_removeFile"></paper-icon-button>
-              <img src$="[[item]]" alt="uploaded-image">
+              <img src$="[[_urlPrefix(item)]]" alt="uploaded-image">
             </div>
           </template>
         </div>
@@ -151,6 +151,10 @@
           dropzoneText: {
             type: String,
             value: 'Drop files here...'
+          },
+          urlPrefix: {
+            type: String,
+            value: ''
           }
         };
       }
@@ -159,6 +163,10 @@
         return [
           '_valueChanged(value.*)'
         ];
+      }
+
+      _urlPrefix(url) {
+        return url && url.indexOf('data:') === 0 ? url : `${this.urlPrefix}${url}`;
       }
 
       connectedCallback() {
