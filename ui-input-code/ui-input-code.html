@@ -6,19 +6,20 @@
 <dom-module id="ui-input-code">
   <template>
     <style>
-       :host {
+      :host {
         display: block;
       }
 
       #editor {
         height: 500px;
         margin: 0 0 16px 0;
+        font-size: 16px;
       }
 
       .ace_editor {
         position: relative;
         overflow: hidden;
-        font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+        font: 16px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
         direction: ltr;
         text-align: left;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -168,7 +169,7 @@
         -moz-user-select: text;
         -webkit-user-select: text;
         user-select: text;
-        white-space: pre!important;
+        white-space: pre !important;
       }
 
       .ace_text-input.ace_composition {
@@ -534,6 +535,7 @@
       .ace-tm .ace_indent-guide {
         background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==") right repeat-y;
       }
+
       /*# sourceURL=ace/css/ace-tm */
 
       .ace-monokai .ace_gutter {
@@ -698,6 +700,7 @@
         this.editor.setValue(this.value);
         this.editor.setTheme("ace/theme/monokai");
         this.editor.getSession().setMode(`ace/mode/${this.language}`);
+        this.editor.getSession().setUseWrapMode(true);
         this.editor.getSession().on('change', (e) => this.set('value', this.editor.getValue()));
       }
 
