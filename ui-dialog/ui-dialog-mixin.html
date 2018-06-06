@@ -23,6 +23,7 @@
     connectedCallback() {
       super.connectedCallback();
       this.$.dialog.addEventListener('iron-overlay-closed', (e) => {
+        document.body.removeAttribute('dialog-open');
         if (this.removeAfterHide && this.parentNode) {
           this.parentNode.removeChild(this);
         }
@@ -30,6 +31,7 @@
     }
 
     open() {
+      document.body.setAttribute('dialog-open', true);
       this.$.dialog.open();
     }
 
